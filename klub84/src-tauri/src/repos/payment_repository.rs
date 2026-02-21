@@ -1,13 +1,8 @@
 use rusqlite::{Connection, Result, params};
 use crate::models::payment::Payment;
 
-fn generate_payment_id(conn: &Connection, company_id: i32) -> Result<String> {
-    let prefix = match company_id {
-        1 => "K84P",
-        2 => "UMIP",
-        _ => return Err(rusqlite::Error::InvalidQuery),
-    };
-
+fn generate_payment_id(conn: &Connection) -> Result<String> {
+    let prefix = "PAY";
     let pattern = format!("{}-%", prefix);
 
     let mut stmt = conn.prepare(
@@ -34,152 +29,90 @@ fn generate_payment_id(conn: &Connection, company_id: i32) -> Result<String> {
     Ok(format!("{}-{:04}", prefix, next_number))
 }
 
-fn calculate_pending_amount(
-    conn: &Connection,
-    member_id: &str,
-) -> Result<f64> {
-
-    let total_shares: f64 = conn.query_row(
-        "SELECT COALESCE(SUM(total_amount), 0)
-         FROM shares
-         WHERE member_id = ?1 AND status = 'active'",
-        [member_id],
-        |row| row.get(0),
-    )?;
-
-    let total_paid: f64 = conn.query_row(
-        "SELECT COALESCE(SUM(amount), 0)
-         FROM payments
-         WHERE member_id = ?1
-         AND status = 'cleared'
-         AND payment_type = 'normal'",
-        [member_id],
-        |row| row.get(0),
-    )?;
-
-    Ok(total_shares - total_paid)
-}
-
-pub fn create_payment(conn: &Connection, payment: Payment) -> Result<()> {
-    // let tx = conn.transaction()?;
-
-    let pending = calculate_pending_amount(conn, &payment.member_id)?;
-
-    if payment.payment_type.as_deref() != Some("penalty") {
-        if payment.amount > pending {
-            return Err(rusqlite::Error::InvalidQuery);
-        }
-    }
-
-    let new_id = generate_payment_id(conn, payment.company_id)?;
-
+pub fn insert_payment(conn: &Connection, payment: Payment) -> Result<()> {
+    let new_id = generate_payment_id(conn)?;
     conn.execute(
-        "INSERT INTO payments (
-            payment_id, company_id, member_id,
-            amount, payment_mode, reference_number,
-            payment_type, status, linked_payment_id, notes
-        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'cleared', ?8, ?9)",
+        "INSERT INTO payments
+        (payment_id, purchase_id, member_id, amount, payment_mode,
+         reference_number, payment_type, status)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
         params![
             new_id,
-            payment.company_id,
+            payment.purchase_id,
             payment.member_id,
             payment.amount,
             payment.payment_mode,
             payment.reference_number,
-            payment.payment_type.unwrap_or("normal".into()),
-            payment.linked_payment_id,
-            payment.notes
+            payment.payment_type,
+            payment.status
         ],
     )?;
-
-    // tx.commit()?;
     Ok(())
 }
 
-pub fn get_payments_by_member(
-    conn: &Connection,
-    member_id: String,
-) -> Result<Vec<Payment>> {
-
+pub fn get_purchase_payments(conn: &Connection, purchase_id: String) -> Result<Vec<Payment>> {
     let mut stmt = conn.prepare(
-        "SELECT payment_id, company_id, member_id,
-                amount, payment_mode, reference_number,
-                payment_type, status, linked_payment_id,
-                notes, created_at, update_date
-         FROM payments
-         WHERE member_id = ?1
-         ORDER BY created_at DESC"
+        "SELECT payment_id, purchase_id, member_id, amount, payment_mode,
+        reference_number, payment_type, status, created_at, updated_at
+        FROM payments
+        WHERE purchase_id = ?1
+        ORDER BY created_at DESC"
     )?;
 
-    let payments = stmt
-        .query_map([member_id], |row| {
+    let rows = stmt.query_map([purchase_id], |row| {
+        Ok(Payment {
+            payment_id: row.get(0)?,
+            purchase_id: row.get(1)?,
+            member_id: row.get(2)?,
+            amount: row.get(3)?,
+            payment_mode: row.get(4)?,
+            reference_number: row.get(5)?,
+            payment_type: row.get(6)?,
+            status: row.get(7)?,
+            created_at: row.get(8)?,
+            updated_at: row.get(9)?,
+        })
+    })?;
+
+    Ok(rows.collect::<Result<Vec<_>>>()?)
+}
+
+pub fn update_payment_status(
+    conn: &Connection,
+    payment_id: String,
+    status: String,
+) -> Result<()> {
+
+    conn.execute(
+        "UPDATE payments
+         SET status = ?1,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE payment_id = ?2",
+        params![status, payment_id],
+    )?;
+
+    Ok(())
+}
+
+pub fn get_payment(conn: &Connection, payment_id: String) -> Result<Payment> {
+    conn.query_row(
+        "SELECT payment_id, purchase_id, member_id, amount, payment_mode,
+        reference_number, payment_type, status, created_at, updated_at
+        FROM payments WHERE payment_id = ?1",
+        [payment_id],
+        |row| {
             Ok(Payment {
-                payment_id: Some(row.get(0)?),
-                company_id: row.get(1)?,
+                payment_id: row.get(0)?,
+                purchase_id: row.get(1)?,
                 member_id: row.get(2)?,
                 amount: row.get(3)?,
                 payment_mode: row.get(4)?,
                 reference_number: row.get(5)?,
                 payment_type: row.get(6)?,
                 status: row.get(7)?,
-                linked_payment_id: row.get(8)?,
-                notes: row.get(9)?,
-                created_at: row.get(10)?,
-                update_date: row.get(11)?,
+                created_at: row.get(8)?,
+                updated_at: row.get(9)?,
             })
-        })?
-        .collect::<Result<Vec<Payment>, _>>()?;
-
-    Ok(payments)
-}
-
-pub fn mark_payment_bounced(
-    conn: &Connection,
-    payment_id: String,
-    penalty_amount: f64,
-) -> Result<()> {
-
-    // let tx = conn.transaction()?;
-
-    conn.execute(
-        "UPDATE payments
-         SET status = 'bounced',
-             update_date = CURRENT_TIMESTAMP
-         WHERE payment_id = ?1",
-        [payment_id.clone()],
-    )?;
-
-    let penalty = Payment {
-        payment_id: None,
-        company_id: 1,
-        member_id: "".to_string(),
-        amount: penalty_amount,
-        payment_mode: "penalty".to_string(),
-        reference_number: None,
-        payment_type: Some("penalty".into()),
-        status: Some("cleared".into()),
-        linked_payment_id: Some(payment_id),
-        notes: Some("Bounce penalty".into()),
-        created_at: None,
-        update_date: None,
-    };
-
-    // tx.commit()?;
-    Ok(create_payment(conn, penalty)?)
-}
-
-pub fn void_payment(
-    conn: &Connection,
-    payment_id: String,
-) -> Result<()> {
-
-    conn.execute(
-        "UPDATE payments
-         SET status = 'void',
-             update_date = CURRENT_TIMESTAMP
-         WHERE payment_id = ?1",
-        [payment_id],
-    )?;
-
-    Ok(())
+        },
+    )
 }

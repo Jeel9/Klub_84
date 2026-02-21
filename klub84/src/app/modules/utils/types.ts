@@ -24,34 +24,41 @@ export type Member = {
   update_date?: string;
 };
 
-export type Share = {
-  share_id?: string;
+export type ShareScheme = {
+  scheme_id: string;
   company_id: number;
-  member_id: string;
+  scheme_name: string;
+  face_value: number;
+  status: "active" | "inactive";
+  created_at?: string;
+  updated_at?: string;
+};
 
-  share_number: string;
+export type SharePurchase = {
+  purchase_id: string;
+  member_id: string;
+  company_id: number;
+  scheme_id: string;
+
   quantity: number;
   price_per_share: number;
   total_amount: number;
 
-  issue_date?: string;
-  status?: "active" | "inactive";
-  update_date?: string;
+  paid_amount: number;
+  pending_amount: number;
+
+  status: string;
+  created_at?: string;
 };
 
 export type Payment = {
-  payment_id?: string;
-  company_id: number;
+  payment_id: string;
+  purchase_id: string;
   member_id: string;
-
   amount: number;
   payment_mode: string;
-  reference_number?: string;
   payment_type?: "normal" | "penalty";
   status?: "cleared" | "bounced" | "void";
-  linked_payment_id?: string;
-  notes?: string;
-
+  reference_number?: string;
   created_at?: string;
-  update_date?: string;
 };

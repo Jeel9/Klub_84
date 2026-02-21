@@ -4,60 +4,37 @@ import PaymentFormDrawer from "../utils/PaymentForm";
 import MemberSelector from "../utils/MemberSelector";
 import usePayments from "../utils/paymentHooks";
 import Button from "../../../app/components/Button";
-import { useCompanyStore } from "../../store/companyStore";
+import PurchaseSelector from "../utils/PurchaseSelector";
 
 export default function PaymentsPage() {
-  const { companyId } = useCompanyStore();
-  const [memberId, setMemberId] = useState("");
-
-  const { payments, createPayment, voidPayment } =
-    usePayments(memberId);
-
+  const [memberId, setMemberId] = useState<string | null>(null);
+  const [purchaseId, setPurchaseId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+
+  const { payments, addPayment, bounce } = usePayments(purchaseId);
 
   return (
     <div>
-      {/* Top Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
-        <div style={{ display: "flex", gap: 20 }}>
-          <h1>Payments</h1>
-          <MemberSelector
-            companyId={companyId}
-            onSelect={setMemberId}
-          />
-        </div>
+      <h1>Payments</h1>
 
-        {memberId && (
-          <Button onClick={() => setOpen(true)}>
-            + Add Payment
-          </Button>
-        )}
+      <div className="page-header">
+        <MemberSelector onSelect={setMemberId} />
+        {memberId && <PurchaseSelector memberId={memberId} onSelect={setPurchaseId} />}
+        {purchaseId && <Button onClick={() => setOpen(true)}>Add Installment</Button>}
       </div>
 
-      {/* Table */}
-      {memberId ? (
-        <PaymentTable
-          payments={payments}
-          onVoid={voidPayment}
-        />
+      {purchaseId ? (
+        <PaymentTable payments={payments} onBounce={bounce} />
       ) : (
-        <p>Select a member to view payments</p>
+        <p>Select purchase</p>
       )}
 
-      {/* Drawer */}
       <PaymentFormDrawer
         open={open}
         onClose={() => setOpen(false)}
-        onSubmit={createPayment}
+        purchaseId={purchaseId}
         memberId={memberId}
-        companyId={companyId}
+        onSave={addPayment}
       />
     </div>
   );

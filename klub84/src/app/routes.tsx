@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import MembersPage from "./modules/pages/MembersPage";
 import PaymentsPage from "./modules/pages/PaymentsPage";
+import SharesPage from "./modules/pages/SharePage";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
       {
         path: "payments",
         element: <PaymentsPage />,
+      },
+      {
+        path: "shares",
+        element: <SharesPage />,
       },
     ],
   },

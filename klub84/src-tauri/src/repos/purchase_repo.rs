@@ -86,7 +86,7 @@ pub fn get_member_purchases(conn: &Connection, member_id: String) -> Result<Vec<
 
 pub fn update_payment(
     conn: &Connection,
-    purchase_id: String,
+    purchase_id: Option<String>,
     paid: f64,
     pending: f64,
     status: String,

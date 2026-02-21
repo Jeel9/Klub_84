@@ -1,66 +1,37 @@
-import Table from "../../../app/components/Table";
-import Badge from "../../../app/components/Badge";
 import Button from "../../../app/components/Button";
 import type { Payment } from "./types";
 
-type Props = {
-  payments: Payment[];
-  onVoid: (id: string) => void;
-};
-
-export default function PaymentTable({
-  payments,
-  onVoid,
-}: Props) {
+export default function PaymentTable({ payments, onBounce }: any) {
   return (
-    <div style={{ overflowX: "auto" }}>
-      <Table
-        headers={[
-          "Payment ID",
-          "Amount",
-          "Mode",
-          "Reference",
-          "Type",
-          "Status",
-          "Date",
-          "Actions",
-        ]}
-      >
-        {payments.map((payment) => (
-          <tr key={payment.payment_id}>
-            <td>{payment.payment_id}</td>
-            <td>{payment.amount}</td>
-            <td>{payment.payment_mode}</td>
-            <td>{payment.reference_number || "-"}</td>
-            <td>{payment.payment_type}</td>
+    <table className="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {payments.map((p: Payment) => (
+          <tr key={p.payment_id}>
+            <td>{p.payment_id}</td>
+            <td>₹ {p.amount}</td>
+            <td>{p.payment_mode}</td>
+            <td>{p.payment_type}</td>
+            <td>{p.status}</td>
             <td>
-              <Badge
-                type={
-                  payment.status === "cleared"
-                    ? "success"
-                    : "danger"
-                }
-              >
-                {payment.status}
-              </Badge>
-            </td>
-            <td>{payment.created_at}</td>
-            <td>
-              {payment.status !== "void" && (
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    payment.payment_id &&
-                    onVoid(payment.payment_id)
-                  }
-                >
-                  Void
+              {p.status === "cleared" && p.payment_type === "normal" && (
+                <Button variant="secondary" onClick={() => onBounce(p.payment_id)}>
+                  Bounce
                 </Button>
               )}
             </td>
           </tr>
         ))}
-      </Table>
-    </div>
+      </tbody>
+    </table>
   );
 }

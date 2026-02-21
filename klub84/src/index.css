@@ -24,8 +24,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* display: flex;
+  place-items: center; */
   min-width: 320px;
   min-height: 100vh;
   background: #f8fafc;
@@ -124,6 +124,8 @@ button:focus-visible {
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ===== TOPBAR ===== */
@@ -233,6 +235,7 @@ button:focus-visible {
 .table {
   width: 100%;
   border-collapse: collapse;
+  overflow-x: auto;
 }
 
 .table th {
@@ -310,4 +313,13 @@ button:focus-visible {
   .drawer {
     width: 100%;
   }
+  
+  .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 }

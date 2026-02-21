@@ -2,42 +2,28 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Payment } from "./types";
 
-export default function usePayments(memberId?: string) {
+export default function usePayments(purchaseId: string | null) {
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  const fetchPayments = async () => {
-    if (!memberId) return;
-
-    setLoading(true);
-    const data = await invoke<Payment[]>(
-      "get_payments_by_member",
-      { member_id: memberId }
-    );
+  const load = async () => {
+    if (!purchaseId) return;
+    const data = await invoke<Payment[]>("get_purchase_payments", { purchaseId });
     setPayments(data);
-    setLoading(false);
   };
 
-  const createPayment = async (payment: Payment) => {
-    await invoke("create_payment", { payment });
-    fetchPayments();
+  const addPayment = async (payload: any) => {
+    await invoke("add_purchase_payment", payload);
+    await load();
   };
 
-  const voidPayment = async (paymentId: string) => {
-    await invoke("void_payment", {
-      payment_id: paymentId,
-    });
-    fetchPayments();
+  const bounce = async (paymentId: string) => {
+    await invoke("bounce_payment", { paymentId });
+    await load();
   };
 
   useEffect(() => {
-    fetchPayments();
-  }, [memberId]);
+    load();
+  }, [purchaseId]);
 
-  return {
-    payments,
-    loading,
-    createPayment,
-    voidPayment,
-  };
+  return { payments, addPayment, bounce };
 }

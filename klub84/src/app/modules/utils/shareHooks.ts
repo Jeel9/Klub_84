@@ -1,44 +1,42 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import type { Share } from "./types";
+import type { ShareScheme } from "./types";
 
-export default function useShares(memberId?: string) {
-  const [shares, setShares] = useState<Share[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function useShareSchemes(companyId: number) {
+  const [schemes, setSchemes] = useState<ShareScheme[]>([]);
 
-  const fetchShares = async () => {
-    if (!memberId) return;
-    setLoading(true);
-
-    const data = await invoke<Share[]>(
-      "get_shares_by_member",
-      { member_id: memberId }
-    );
-
-    setShares(data);
-    setLoading(false);
-  };
-
-  const createShare = async (share: Share) => {
-    await invoke("create_share", { share });
-    fetchShares();
-  };
-
-  const deactivateShare = async (shareId: string) => {
-    await invoke("deactivate_share", {
-      share_id: shareId,
+  const load = async () => {
+    const data = await invoke<ShareScheme[]>("get_company_share_schemes", {
+      companyId,
     });
-    fetchShares();
+    setSchemes(data);
+  };
+
+  const createScheme = async (name: string, value: number) => {
+    await invoke("create_share_scheme", {
+      companyId,
+      schemeName: name,
+      faceValue: value,
+    });
+    await load();
+  };
+
+  const updatePrice = async (schemeId: string, newPrice: number) => {
+    await invoke("update_share_price", {
+      schemeId,
+      newPrice,
+    });
+    await load();
+  };
+
+  const deactivate = async (schemeId: string) => {
+    await invoke("deactivate_share_scheme", { schemeId });
+    await load();
   };
 
   useEffect(() => {
-    fetchShares();
-  }, [memberId]);
+    load();
+  }, [companyId]);
 
-  return {
-    shares,
-    loading,
-    createShare,
-    deactivateShare,
-  };
+  return { schemes, createScheme, updatePrice, deactivate };
 }
