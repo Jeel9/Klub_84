@@ -33,11 +33,15 @@ export default function SchemeFormDrawer({
   }, [editing]);
 
   const submit = () => {
+    if (!value) return;
+
     if (editing) {
       onUpdate(editing.scheme_id, Number(value));
     } else {
+      if (!name) return;
       onCreate(name, Number(value));
     }
+
     onClose();
   };
 
@@ -46,7 +50,11 @@ export default function SchemeFormDrawer({
       <h2>{editing ? "Update Share Price" : "Create Scheme"}</h2>
 
       {!editing && (
-        <Input label="Scheme Name" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          label="Scheme Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       )}
 
       <Input
@@ -57,7 +65,9 @@ export default function SchemeFormDrawer({
       />
 
       <div style={{ marginTop: 20 }}>
-        <Button onClick={submit}>{editing ? "Update" : "Create"}</Button>
+        <Button onClick={submit}>
+          {editing ? "Update" : "Create"}
+        </Button>
       </div>
     </Drawer>
   );

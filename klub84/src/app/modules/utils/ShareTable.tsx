@@ -26,7 +26,7 @@ export default function SchemeTable({ schemes, onEdit, onDeactivate }: Props) {
             <td>{s.status}</td>
             <td style={{ display: "flex", gap: 8 }}>
               <Button onClick={() => onEdit(s)}>Update Price</Button>
-              <Button variant="primary" onClick={() => onDeactivate(s.scheme_id)}>
+              <Button variant="secondary" onClick={() => onDeactivate(s.scheme_id)}>
                 Deactivate
               </Button>
             </td>
