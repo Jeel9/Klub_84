@@ -22,6 +22,7 @@ export type Member = {
   join_date?: string;
   status: "active" | "inactive";
   update_date?: string;
+  profile_image?: string;
 };
 
 export type ShareScheme = {
@@ -34,21 +35,22 @@ export type ShareScheme = {
   updated_at?: string;
 };
 
-export type SharePurchase = {
-  purchase_id: string;
-  member_id: string;
-  company_id: number;
-  scheme_id: string;
+export interface SharePurchase {
+  purchaseId: string;
+  companyId: number;
+  memberId: string;
+
+  schemeId: string;
+  schemeName: string;
 
   quantity: number;
-  price_per_share: number;
-  total_amount: number;
+  sharePrice: number;
+  totalAmount: number;
+  paidAmount: number;
+  pendingAmount: number;
 
-  paid_amount: number;
-  pending_amount: number;
-
-  status: string;
-  created_at?: string;
+  status: "active" | "completed";
+  createdAt: string;
 };
 
 export type Payment = {

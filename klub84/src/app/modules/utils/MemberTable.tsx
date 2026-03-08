@@ -18,7 +18,8 @@ export default function MemberTable({
     <div style={{ overflowX: "auto" }}>
       <Table
         headers={[
-          "Member ID",
+          "Image",
+          "ID",
           "Name",
           "City",
           "Email",
@@ -30,6 +31,20 @@ export default function MemberTable({
       >
         {members.map((member) => (
           <tr key={member.member_id} className="table-row">
+            <td>{member.profile_image ? (
+                <img
+                  src={member.profile_image}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    objectFit: "cover",
+                    borderRadius: 6
+                  }}
+                />
+              ) : (
+                "-"
+              )}
+            </td>
             <td>{member.member_id}</td>
             <td>{member.name}</td>
             <td>{member.city || "-"}</td>

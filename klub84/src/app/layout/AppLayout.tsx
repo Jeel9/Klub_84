@@ -42,7 +42,7 @@ export default function AppLayout() {
         <Topbar />
         <div className="content-area">
           <Outlet />
-          <TestPurchase />
+          {/* <TestPurchase /> */}
         </div>
       </div>
     </div>

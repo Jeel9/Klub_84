@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result, params};
 use crate::models::payment::Payment;
 
-fn generate_payment_id(conn: &Connection) -> Result<String> {
+pub fn generate_payment_id(conn: &Connection) -> Result<String> {
     let prefix = "PAY";
     let pattern = format!("{}-%", prefix);
 

@@ -39,7 +39,6 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
             FOREIGN KEY (company_id) REFERENCES companies(id)
         );
 
-
         CREATE INDEX IF NOT EXISTS idx_member_company 
         ON members(company_id);
 
@@ -106,7 +105,7 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
 
         CREATE TABLE IF NOT EXISTS payments (
             payment_id TEXT PRIMARY KEY NOT NULL,
-            company_id INTEGER NOT NULL,
+            purchase_id TEXT NOT NULL,
             member_id TEXT NOT NULL,
 
             amount REAL NOT NULL,
@@ -118,17 +117,13 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
             notes TEXT,
 
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-            update_date TEXT,
+            updated_at TEXT,
 
-            FOREIGN KEY (company_id) REFERENCES companies(id),
             FOREIGN KEY (member_id) REFERENCES members(member_id)
         );
 
         CREATE INDEX IF NOT EXISTS idx_payments_member
         ON payments(member_id);
-
-        CREATE INDEX IF NOT EXISTS idx_payments_company
-        ON payments(company_id);
 
         "
     )?;

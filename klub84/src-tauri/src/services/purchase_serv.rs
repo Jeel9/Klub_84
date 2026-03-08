@@ -76,7 +76,7 @@ pub fn create_share_purchase(
 }
 
 #[tauri::command]
-pub fn get_member_share_purchases(
+pub fn get_member_purchases(
     state: State<AppState>,
     member_id: String,
 ) -> Result<Vec<SharePurchase>, String> {
@@ -84,5 +84,18 @@ pub fn get_member_share_purchases(
     let conn = state.db.lock().unwrap();
 
     purchase_repo::get_member_purchases(&conn, member_id)
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn sell_share(
+    purchase_id: Option<String>, 
+    current_price: f64,
+    state: State<AppState>,
+) -> Result<(), String> {
+
+    let conn = state.db.lock().unwrap();
+
+    purchase_repo::sell_share(&conn, purchase_id, current_price)
         .map_err(|e| e.to_string())
 }

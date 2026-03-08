@@ -97,12 +97,15 @@ pub fn get_purchase_payments(
         .map_err(|e| e.to_string())
 }
 
+#[tauri::command]
 pub fn bounce_payment(
-    conn: &Connection,
+    state: State<AppState>,
     payment_id: String,
 ) -> Result<(), String> {
 
-    let payment = payment_repository::get_payment(conn, payment_id.clone())
+    let conn = state.db.lock().unwrap();
+
+    let payment = payment_repository::get_payment(&conn, payment_id.clone())
         .map_err(|e| e.to_string())?;
 
     if payment.status == "bounced" {
@@ -111,7 +114,7 @@ pub fn bounce_payment(
 
     // 1 restore purchase pending
     let mut purchases = purchase_repo::get_member_purchases(
-        conn,
+        &conn,
         payment.member_id.clone(),
     ).map_err(|e| e.to_string())?;
 
@@ -123,7 +126,7 @@ pub fn bounce_payment(
     purchase.pending_amount += payment.amount;
 
     purchase_repo::update_payment(
-        conn,
+        &conn,
         purchase.purchase_id.clone(),
         purchase.paid_amount,
         purchase.pending_amount,
@@ -132,7 +135,7 @@ pub fn bounce_payment(
 
     // 2 mark payment bounced
     payment_repository::update_payment_status(
-        conn,
+        &conn,
         payment_id.clone(),
         "bounced".into(),
     ).map_err(|e| e.to_string())?;
@@ -151,7 +154,7 @@ pub fn bounce_payment(
         updated_at: None,
     };
 
-    payment_repository::insert_payment(conn, penalty)
+    payment_repository::insert_payment(&conn, penalty)
         .map_err(|e| e.to_string())?;
 
     Ok(())

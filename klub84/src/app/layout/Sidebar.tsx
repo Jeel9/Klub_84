@@ -40,15 +40,6 @@ export default function Sidebar() {
       >
         Payments
       </NavLink>
-
-      <NavLink
-        to="/reports"
-        className={({ isActive }) =>
-          `sidebar-item ${isActive ? "active" : ""}`
-        }
-      >
-        Reports
-      </NavLink>
     </div>
   );
 }

@@ -20,4 +20,5 @@ pub struct Member {
     pub family_member3: Option<String>,
     pub family_member4: Option<String>,
     pub status: String,
+    pub profile_image: Option<String>,
 }

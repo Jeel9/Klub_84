@@ -15,8 +15,8 @@ use std::sync::Mutex;
 use tauri::Manager;
 use services::member_serv::{create_member, get_members, update_member, deactivate_member};
 use services::share_serv::{create_share_scheme, get_company_share_schemes, update_share_price, deactivate_share_scheme};
-use services::purchase_serv::{create_share_purchase, get_member_share_purchases};
-use services::payment_serv::{get_purchase_payments, add_purchase_payment};
+use services::purchase_serv::{create_share_purchase, get_member_purchases, sell_share};
+use services::payment_serv::{get_purchase_payments, add_purchase_payment, bounce_payment};
 
 struct AppState {
     db: Mutex<Connection>,
@@ -42,8 +42,10 @@ fn main() {
             deactivate_share_scheme,
             get_purchase_payments,
             add_purchase_payment,
+            sell_share,
+            bounce_payment,
             create_share_purchase,
-            get_member_share_purchases
+            get_member_purchases
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

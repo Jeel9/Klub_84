@@ -1,5 +1,6 @@
-use rusqlite::{params, Connection, Result};
+use rusqlite::{params, Connection, Result, Error};
 use crate::models::share_purchase::SharePurchase;
+// use crate::repos::payment_repository;
 
 pub fn generate_purchase_id(conn: &Connection) -> Result<String> {
     let prefix = "PUR";
@@ -51,6 +52,22 @@ pub fn create_purchase(conn: &Connection, purchase: SharePurchase) -> Result<()>
             purchase.status
         ],
     )?;
+    // let id = payment_repository::generate_payment_id(conn)?;
+    // conn.execute(
+    //     "INSERT INTO payments
+    //     (payment_id, purchase_id, member_id, amount, payment_mode,
+    //     payment_type, status)
+    //     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+    //     params![
+    //         id,
+    //         new_id,
+    //         purchase.member_id,
+    //         purchase.paid_amount,
+    //         "cash",
+    //         "advance",
+    //         purchase.status
+    //     ],
+    // )?;
     Ok(())
 }
 
@@ -101,6 +118,45 @@ pub fn update_payment(
          WHERE purchase_id = ?4",
         params![paid, pending, status, purchase_id],
     )?;
+
+    Ok(())
+}
+
+pub fn sell_share(
+    conn: &Connection,
+    purchase_id: Option<String>,
+    current_price: f64,
+) -> Result<(), String> {
+        
+    let mut stmt = conn.prepare("
+    SELECT quantity, pending_amount
+    FROM share_purchases
+    WHERE purchase_id = ?
+    ").map_err(|e| e.to_string())?;
+
+    let row = stmt.query_row([purchase_id.clone()], |row| {
+        Ok((row.get::<_, i32>(0)?, row.get::<_, f64>(1)?))
+    }).map_err(|e| e.to_string())?;
+
+    let quantity = row.0;
+    let pending = row.1;
+    let e= "Cannot sell share with pending dues. Please clear dues before selling.".to_string();
+    if pending > 0.0 {
+        return Err(e); // Cannot sell if there are pending dues
+    }
+
+    let total = quantity as f64 * current_price;
+
+    conn.execute(
+    "
+    UPDATE share_purchases
+    SET price_per_share = ?1,
+        total_amount = ?2,
+        status = 'Sold'
+    WHERE purchase_id = ?3
+    ",
+    params![current_price, total, purchase_id]
+    ).map_err(|e| e.to_string())?;
 
     Ok(())
 }

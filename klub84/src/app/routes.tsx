@@ -3,23 +3,28 @@ import AppLayout from "./layout/AppLayout";
 import MembersPage from "./modules/pages/MembersPage";
 import PaymentsPage from "./modules/pages/PaymentsPage";
 import SharesPage from "./modules/pages/SharePage";
+import PurchasesPage from "./modules/pages/PurchasePage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element: <AppLayout/>,
     children: [
       {
         path: "members",
-        element: <MembersPage />,
+        element: <MembersPage/>,
       },
       {
         path: "payments",
-        element: <PaymentsPage />,
+        element: <PaymentsPage/>,
       },
       {
         path: "shares",
-        element: <SharesPage />,
+        element: <SharesPage/>,
+      },
+      {
+        path: "dashboard",
+        element: <PurchasesPage/>,
       },
     ],
   },

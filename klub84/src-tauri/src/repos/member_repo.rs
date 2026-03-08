@@ -44,7 +44,7 @@ pub fn create_member(conn: &Connection, member: Member) -> Result<()> {
             aadhar, pan_number, business, business_address,
             email, gender, dob,
             family_member1, family_member2, family_member3, family_member4,
-            status
+            status, profile_image
         ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10,
                   ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)",
         params![
@@ -65,7 +65,8 @@ pub fn create_member(conn: &Connection, member: Member) -> Result<()> {
             member.family_member2,
             member.family_member3,
             member.family_member4,
-            member.status
+            member.status,
+            member.profile_image
         ],
     )?;
     Ok(())
@@ -77,7 +78,7 @@ pub fn get_members(conn: &Connection, company_id: i32) -> Result<Vec<Member>> {
          aadhar, pan_number, business, business_address,
          email, gender, dob,
          family_member1, family_member2, family_member3, family_member4,
-         status
+         status, profile_image
          FROM members WHERE company_id = ?1"
     )?;
 
@@ -101,6 +102,7 @@ pub fn get_members(conn: &Connection, company_id: i32) -> Result<Vec<Member>> {
             family_member3: row.get(15)?,
             family_member4: row.get(16)?,
             status: row.get(17)?,
+            profile_image: row.get(18)?,
         })
     })?
     .collect::<Result<Vec<Member>, _>>()?;
@@ -127,8 +129,9 @@ pub fn update_member(conn: &Connection, member: Member) -> Result<()> {
             family_member3 = ?14,
             family_member4 = ?15,
             status = ?16,
+            profile_image = ?17,
             update_date = CURRENT_TIMESTAMP
-         WHERE member_id = ?17",
+         WHERE member_id = ?18",
         params![
             member.name,
             member.city,
@@ -146,6 +149,7 @@ pub fn update_member(conn: &Connection, member: Member) -> Result<()> {
             member.family_member3,
             member.family_member4,
             member.status,
+            member.profile_image,
             member.member_id
         ],
     )?;
