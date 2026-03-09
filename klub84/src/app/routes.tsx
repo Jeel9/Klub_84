@@ -3,7 +3,7 @@ import AppLayout from "./layout/AppLayout";
 import MembersPage from "./modules/pages/MembersPage";
 import PaymentsPage from "./modules/pages/PaymentsPage";
 import SharesPage from "./modules/pages/SharePage";
-import PurchasesPage from "./modules/pages/PurchasePage";
+import HomePage from "./modules/pages/HomePage";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: <PurchasesPage/>,
+        element: <HomePage/>,
       },
     ],
   },

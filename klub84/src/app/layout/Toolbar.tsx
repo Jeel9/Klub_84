@@ -1,19 +1,19 @@
-import { useState } from "react";
 import Select from "../components/Select";
+import { useCompanyStore } from "../store/companyStore";
 
 export default function Topbar() {
-  const [company, setCompany] = useState("Klub84");
+  const { companyId, setCompanyId } = useCompanyStore();
 
   return (
     <div className="topbar">
       <div>
         <Select
           label="company-switch"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
+          value={companyId}
+          onChange={(e) => setCompanyId(Number(e.target.value))}
           options={[
-            { label: "Klub84", value: "Klub84" },
-            { label: "Umiya", value: "Umiya" },
+            { label: "Klub84", value: 1 },
+            { label: "Umiya", value: 2 },
           ]}
         />
       </div>

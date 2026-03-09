@@ -81,13 +81,14 @@ pub fn update_scheme_price(
     conn: &Connection,
     scheme_id: String,
     new_price: f64,
+    // company_id: i32
 ) -> Result<()> {
 
     conn.execute(
         "UPDATE share_schemes
          SET face_value = ?1,
              updated_at = CURRENT_TIMESTAMP
-         WHERE scheme_id = ?2",
+         WHERE scheme_id = ?2 ",
         params![new_price, scheme_id],
     )?;
 
@@ -99,8 +100,8 @@ pub fn deactivate_scheme(conn: &Connection, scheme_id: String) -> Result<()> {
         "UPDATE share_schemes
          SET status = 'inactive',
              updated_at = CURRENT_TIMESTAMP
-         WHERE scheme_id = ?1",
-        [scheme_id],
+         WHERE scheme_id = ?1 ",
+        params![scheme_id],
     )?;
 
     Ok(())

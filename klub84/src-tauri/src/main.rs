@@ -24,6 +24,7 @@ struct AppState {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             let conn = establish_connection(app.handle())?;
             app.manage(AppState {

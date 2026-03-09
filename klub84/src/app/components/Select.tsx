@@ -1,11 +1,11 @@
 type Option = {
   label: string;
-  value: string;
+  value: number | string;
 };
 
 type Props = {
   label?: string;
-  value?: string;
+  value?: number | string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: Option[];
 };

@@ -6,7 +6,7 @@ import PurchaseSelector from "../utils/PurchaseSelector";
 import { useState } from "react";
 import {usePayments} from "../utils/paymentHooks";
 import usePurchases from "../utils/purchaseHooks";
-import MemberSearch from "../utils/MemberSelector";
+import MemberSearch from "../utils/MemberSearch";
 import PaymentForm from "../utils/PaymentForm";
 import useShareSchemes from "../utils/shareHooks";
 import { useCompanyStore } from "../../store/companyStore";
@@ -26,7 +26,7 @@ export default function PaymentsPage() {
       <h2 style={{ marginBottom: 8 }}>Payments</h2>
 
       {/* Member Selector */}
-      <MemberSearch
+      <MemberSelector
         // companyId={companyId}
         onSelect={(member) => {
           setSelectedMember(member);

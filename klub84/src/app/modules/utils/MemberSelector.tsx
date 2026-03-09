@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useCompanyStore } from "../../store/companyStore";
 type Member = { member_id: string; name: string };
 
-export default function MemberSearch({
+export default function MemberSelector({
   onSelect,
 }: {
   // companyId: number;
@@ -84,43 +84,3 @@ export default function MemberSearch({
     </div>
   );
 }
-
-// import { useEffect, useState } from "react";
-// import { invoke } from "@tauri-apps/api/core";
-// import { useCompanyStore } from "../../store/companyStore";
-
-// type Member = { member_id: string; name: string };
-
-// export default function MemberSelector({ onSelect }: { onSelect: (id: string) => void }) {
-//   const [members, setMembers] = useState<Member[]>([]);
-//   const [query, setQuery] = useState("");
-//   const { companyId } = useCompanyStore();
-
-//   useEffect(() => {
-//     invoke<Member[]>("get_members", { companyId: companyId }).then(setMembers);
-//   }, [companyId]);
-
-//   const filtered = members.filter((m) =>
-//     `${m.member_id} ${m.name}`.toLowerCase().includes(query.toLowerCase())
-//   );
-
-//   return (
-//     <div style={{ width: 300 }}>
-//       <input
-//         placeholder="Search member"
-//         value={query}
-//         onChange={(e) => setQuery(e.target.value)}
-//       />
-
-//       {query && (
-//         <div className="dropdown">
-//           {filtered.map((m) => (
-//             <div key={m.member_id} onClick={() => onSelect(m.member_id)}>
-//               {m.member_id} - {m.name}
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }

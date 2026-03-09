@@ -34,8 +34,9 @@ pub fn update_member(
 pub fn deactivate_member(
     state: tauri::State<AppState>,
     member_id: String,
+    company_id: i32,
 ) -> Result<(), String> {
     let conn = state.db.lock().unwrap();
-    member_repo::deactivate_member(&conn, member_id)
+    member_repo::deactivate_member(&conn, member_id, company_id)
         .map_err(|e| e.to_string())
 }

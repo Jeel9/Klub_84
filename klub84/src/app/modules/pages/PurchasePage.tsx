@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MemberSearch from "../utils/MemberSelector";
+import MemberSelector from "../utils/MemberSelector";
 import usePurchases from "../utils/purchaseHooks";
 import useShareSchemes from "../utils/shareHooks";
 import { useCompanyStore } from "../../store/companyStore";
@@ -23,7 +23,7 @@ export default function PurchasesPage() {
     <div >
       <h2 style={{ marginBottom: 8, marginTop: 16 }}>Share Purchases</h2>
 
-      <MemberSearch
+      <MemberSelector
         onSelect={setSelectedMember}
       />
 

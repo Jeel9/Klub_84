@@ -15,6 +15,7 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
             member_id TEXT PRIMARY KEY NOT NULL,
             company_id INTEGER NOT NULL,
 
+            profile_picture TEXT,
             name TEXT NOT NULL,
             city TEXT,
             address TEXT,

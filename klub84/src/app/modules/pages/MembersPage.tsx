@@ -2,7 +2,7 @@ import { useState } from "react";
 import useMembers from "../utils/memberHooks";
 import MemberTable from "../utils/MemberTable";
 import MemberFormDrawer from "../utils/MemberForm";
-import MemberSearch from "../utils/MemberSelector";
+import MemberSearch from "../utils/MemberSearch";
 import Button from "../../../app/components/Button";
 import { useCompanyStore } from "../../store/companyStore";
 
@@ -18,6 +18,14 @@ export default function MembersPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredMembers = searchQuery
+          ? members.filter((m) =>
+              `${m.member_id} ${m.name}`
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+            )
+          : members;
 
   const handleSubmit = async (formData: any) => {
     if (editing) {
@@ -58,13 +66,22 @@ export default function MembersPage() {
       </div>
 
       <MemberSearch
+        onSearch={(query) => {
+          setSearchQuery(query);
+        }}
+      />
+      {/* <MemberSearch
         onSelect={(member) => {
           setSelectedMember(member);
         }}
-      />
+      /> */}
 
-      <MemberTable
-        members={selectedMember ? [selectedMember] : members}
+      {/* <MemberTable
+        members={selectedMember ? [selectedMember] : members} */}
+        
+
+        <MemberTable
+          members={filteredMembers}
         onEdit={handleEdit}
         onDeactivate={deactivateMember}
       />

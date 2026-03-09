@@ -62,7 +62,9 @@ export default function MemberTable({
                 {member.status}
               </Badge>
             </td>
-            <td style={{ display: "flex", gap: 8 }}>
+            <td >
+              <div style={{ display: "flex", gap: 8}}>
+
               <Button
                 variant="secondary"
                 onClick={() => onEdit(member)}
@@ -80,6 +82,7 @@ export default function MemberTable({
                   Deactivate
                 </Button>
               )}
+              </div>
             </td>
           </tr>
         ))}

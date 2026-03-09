@@ -84,7 +84,6 @@ useEffect(() => {
 
   const handleImageUpload = (e: any) => {
     const file = e.target.files[0];
-
     if (!file) return;
 
     const reader = new FileReader();
@@ -95,10 +94,8 @@ useEffect(() => {
         profile_image: reader.result as string
       }));
     };
-
     reader.readAsDataURL(file);
   };
-
   return (
     <Drawer open={open} onClose={onClose}>
       <h2 style={{ marginBottom: 20 }}>
