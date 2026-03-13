@@ -6,12 +6,14 @@ import { useCompanyStore } from "../../store/companyStore";
 import Table from "../../components/Table";
 import Badge from "../../components/Badge";
 import Button from "../../components/Button";
+import Input from "../../components/Input";
 
 export default function PurchasesPage() {
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [schemeId, setSchemeId] = useState("");
-  const [qty, setQty] = useState(1);
-  const [paid, setPaid] = useState(0);
+  const [qty, setQty] = useState<number>(0);
+  const [paid, setPaid] = useState<number>(0);
+  const [certificateNumber, setCertificateNumber] = useState("");
   const companyId = useCompanyStore().companyId;
   const { purchases, createPurchase, sellShare } = usePurchases(
     selectedMember?.member_id
@@ -66,30 +68,25 @@ export default function PurchasesPage() {
               ))}
             </select>
 
-            <input
+            <Input
               type="number"
-              min={1}
-              value={qty}
+              value={qty.toString()}
               onChange={(e) => setQty(Number(e.target.value))}
-              style={{
-                width: 100,
-                padding: 10,
-                borderRadius: 8,
-                border: "1px solid #e5e7eb",
-              }}
+              label="Quantity"
             />
 
-            <input
+            <Input
               type="number"
-              min={0}
-              value={paid}
+              value={paid.toString()}
               onChange={(e) => setPaid(Number(e.target.value))}
-              style={{
-                width: 100,
-                padding: 10,
-                borderRadius: 8,
-                border: "1px solid #e5e7eb",
-              }}
+              label="First Payment"
+            />
+
+            <Input
+              type="number"
+              value={certificateNumber}
+              onChange={(e) => setCertificateNumber(e.target.value)}
+              label="Certificate Number"
             />
 
             {/* <button
@@ -109,7 +106,8 @@ export default function PurchasesPage() {
                   schemeId,
                   qty,
                   schemes.find((s) => s.scheme_id === schemeId)?.face_value || 0,
-                  paid
+                  paid,
+                  certificateNumber
                 )
               }
             >
@@ -121,6 +119,7 @@ export default function PurchasesPage() {
             <Table
                     headers={[
                       "Purchase ID",
+                      "Certificate Number",
                       "Scheme",
                       "QTY",
                       "Total Amount",
@@ -130,12 +129,13 @@ export default function PurchasesPage() {
                     ]}
                   >
                     {purchases.map((p) => (
-                      <tr key={p.purchase_id} className="table-row">
-                        <td>{p.purchase_id}</td>
-                        <td>{schemes.find((s) => s.scheme_id === p.scheme_id)?.scheme_name}</td>
+                      <tr key={p.purchaseId} className="table-row">
+                        <td>{p.purchaseId}</td>
+                        <td>{p.certificateNumber}</td>
+                        <td>{schemes.find((s) => s.scheme_id === p.schemeId)?.scheme_name}</td>
                         <td>{p.quantity}</td>
-                        <td>{p.total_amount}</td>
-                        <td>{p.pending_amount}</td>
+                        <td>{p.totalAmount}</td>
+                        <td>{p.pendingAmount}</td>
                         <td>
                           <Badge
                             type={
@@ -149,8 +149,8 @@ export default function PurchasesPage() {
                         </td>
                         <td>
                           <Button onClick={() => sellShare(
-                              p.purchase_id,
-                              schemes.find((s) => s.scheme_id === p.scheme_id)?.face_value || 0,
+                              p.purchaseId,
+                              schemes.find((s) => s.scheme_id === p.schemeId)?.face_value || 0,
                             )}>
                             Sell Share
                           </Button>

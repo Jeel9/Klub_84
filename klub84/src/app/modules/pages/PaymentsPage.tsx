@@ -1,12 +1,8 @@
-import PaymentTable from "../utils/PaymentTable";
-import PaymentFormDrawer from "../utils/PaymentForm";
 import MemberSelector from "../utils/MemberSelector";
 import Button from "../../../app/components/Button";
-import PurchaseSelector from "../utils/PurchaseSelector";
 import { useState } from "react";
 import {usePayments} from "../utils/paymentHooks";
 import usePurchases from "../utils/purchaseHooks";
-import MemberSearch from "../utils/MemberSearch";
 import PaymentForm from "../utils/PaymentForm";
 import useShareSchemes from "../utils/shareHooks";
 import { useCompanyStore } from "../../store/companyStore";
@@ -19,11 +15,16 @@ export default function PaymentsPage() {
   const { schemes } = useShareSchemes(companyId);
   const { purchases } = usePurchases(selectedMember?.member_id);
   const { payments, createPayment, bouncePayment } =
-    usePayments(selectedPurchase?.purchase_id);
+    usePayments(selectedPurchase?.purchaseId);
 
   return (
     <div >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
       <h2 style={{ marginBottom: 8 }}>Payments</h2>
+      <Button onClick={() => window.print()}>
+        Print Receipt
+      </Button>
+      </div>
 
       {/* Member Selector */}
       <MemberSelector
@@ -49,21 +50,21 @@ export default function PaymentsPage() {
           >
             {purchases.map((p) => (
               <div
-                key={p.purchase_id}
+                key={p.purchaseId}
                 onClick={() => setSelectedPurchase(p)}
                 style={{
                   padding: 12,
                   borderRadius: 8,
                   border:
-                    selectedPurchase?.purchase_id === p.purchase_id
+                    selectedPurchase?.purchaseId === p.purchaseId
                       ? "2px solid #2563eb"
                       : "1px solid #e5e7eb",
                   cursor: "pointer",
                   background: "white",
                 }}
               >
-                <strong>{schemes.find((s) => s.scheme_id === p.scheme_id)?.scheme_name}</strong> — Qty: {p.quantity} 
-                 — Total: ₹ {p.total_amount} — Pending: ₹ {p.pending_amount} — Status: {p.status}
+                <strong>{schemes.find((s) => s.scheme_id === p.schemeId)?.scheme_name}</strong> — Qty: {p.quantity} 
+                 — Total: ₹ {p.totalAmount} — Pending: ₹ {p.pendingAmount} — Status: {p.status}
               </div>
             ))}
           </div>
@@ -84,7 +85,7 @@ export default function PaymentsPage() {
           <h3>Payment History</h3>
 
           <div style={{ overflowX: "auto" }}>
-            <Table  headers={["ID", "Amount", "Mode", "Reference Number", "Status", "Actions"]}>
+            <Table  headers={["ID", "Amount", "Mode", "Reference Number", "Status", "Date", "Actions"]}>
               {/* <thead>
                 <tr>
                   <th>ID</th>
@@ -102,7 +103,8 @@ export default function PaymentsPage() {
                     <td>{pay.payment_mode}</td>
                     <td>{pay.reference_number}</td>
                     <td>{pay.status}</td>
-                    <td style={{ display: "flex", gap: 8 }}>
+                    <td>{pay.created_at}</td>
+                    <td style={{ display: "flex", gap: 8 , margin: "auto"}}>
                       {pay.payment_mode === "cheque" &&
                         pay.status !== "bounced" && (
                           <Button

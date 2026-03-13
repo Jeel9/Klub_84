@@ -10,6 +10,7 @@ export default function PurchaseFormDrawer({ open, onClose, memberId, companyId,
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(0);
   const [payment, setPayment] = useState(0);
+  const [certificateNumber, setCertificateNumber] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -31,6 +32,7 @@ export default function PurchaseFormDrawer({ open, onClose, memberId, companyId,
       quantity,
       pricePerShare: price,
       firstPayment: payment,
+      certificateNumber: certificateNumber,
     });
     onClose();
   };
@@ -48,10 +50,11 @@ export default function PurchaseFormDrawer({ open, onClose, memberId, companyId,
         ))}
       </select>
 
-      <Input label="Quantity" type="number" value={quantity.toString()} onChange={(e) => setQuantity(Number(e.target.value))} />
+      <Input label="Quantity" type="number" value={quantity.toString()} onChange={(e) => setQuantity(Number(e.target.value))} placeholder="Qty" />
       <Input label="Price" value={price.toString()} />
       <Input label="Total" value={total.toString()} />
-      <Input label="First Payment" type="number" value={payment.toString()} onChange={(e) => setPayment(Number(e.target.value))} />
+      <Input label="First Payment" type="number" value={payment.toString()} onChange={(e) => setPayment(Number(e.target.value))} placeholder="First Payment"/>
+      <Input label="Certificate Number" value={certificateNumber} onChange={(e) => setCertificateNumber(e.target.value)} placeholder="Certificate Number"/>
 
       <Button onClick={submit}>Create Purchase</Button>
     </Drawer>

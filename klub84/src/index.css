@@ -323,3 +323,36 @@ button:focus-visible {
   gap: 12px;
 }
 }
+@media print {
+
+  /* remove scroll containers */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .app-layout {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .main-content {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .content-area {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* tables break nicely across pages */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+}

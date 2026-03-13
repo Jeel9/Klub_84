@@ -11,7 +11,7 @@ export default function useShareSchemes(companyId: number) {
     setLoading(true);
 
     const data = await invoke<ShareScheme[]>("get_company_share_schemes", {
-      companyId: companyId, // <-- camelCase REQUIRED
+      companyId: companyId,
     });
 
     setSchemes(data);

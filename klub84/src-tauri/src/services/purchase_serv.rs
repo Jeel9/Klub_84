@@ -12,6 +12,7 @@ pub fn create_purchase(
     quantity: i32,
     price: f64,
     first_payment: f64,
+    certificate_number: String,
 ) -> Result<(), String> {
 
     if first_payment <= 0.0 {
@@ -45,6 +46,7 @@ pub fn create_purchase(
         status: status.to_string(),
         created_at: None,
         updated_at: None,
+        certificate_number: Some(certificate_number),
     };
 
     purchase_repo::create_purchase(conn, purchase)
@@ -60,6 +62,7 @@ pub fn create_share_purchase(
     quantity: i32,
     price_per_share: f64,
     first_payment: f64,
+    certificate_number: String,
 ) -> Result<(), String> {
 
     let conn = state.db.lock().unwrap();
@@ -72,6 +75,7 @@ pub fn create_share_purchase(
         quantity,
         price_per_share,
         first_payment,
+        certificate_number,
     )
 }
 

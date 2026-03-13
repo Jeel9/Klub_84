@@ -42,15 +42,16 @@ export interface SharePurchase {
 
   schemeId: string;
   schemeName: string;
-
+  
   quantity: number;
   sharePrice: number;
   totalAmount: number;
   paidAmount: number;
   pendingAmount: number;
-
+  
   status: "active" | "completed";
   createdAt: string;
+  certificateNumber: string;
 };
 
 export type Payment = {

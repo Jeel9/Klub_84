@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Result, Error};
+use rusqlite::{params, Connection, Result};
 use crate::models::share_purchase::SharePurchase;
 // use crate::repos::payment_repository;
 
@@ -37,8 +37,8 @@ pub fn create_purchase(conn: &Connection, purchase: SharePurchase) -> Result<()>
     conn.execute(
         "INSERT INTO share_purchases
         (purchase_id, member_id, company_id, scheme_id, quantity,
-        price_per_share, total_amount, paid_amount, pending_amount, status)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+        price_per_share, total_amount, paid_amount, pending_amount, status, certificate_number)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
         params![
             new_id,
             purchase.member_id,
@@ -49,7 +49,8 @@ pub fn create_purchase(conn: &Connection, purchase: SharePurchase) -> Result<()>
             purchase.total_amount,
             purchase.paid_amount,
             purchase.pending_amount,
-            purchase.status
+            purchase.status,
+            purchase.certificate_number
         ],
     )?;
     // let id = payment_repository::generate_payment_id(conn)?;
@@ -75,7 +76,7 @@ pub fn get_member_purchases(conn: &Connection, member_id: String) -> Result<Vec<
     let mut stmt = conn.prepare(
         "SELECT purchase_id, member_id, company_id, scheme_id, quantity,
         price_per_share, total_amount, paid_amount, pending_amount,
-        status, created_at, updated_at
+        status, created_at, updated_at, certificate_number
         FROM share_purchases
         WHERE member_id = ?1
         ORDER BY created_at DESC"
@@ -95,6 +96,7 @@ pub fn get_member_purchases(conn: &Connection, member_id: String) -> Result<Vec<
             status: row.get(9)?,
             created_at: row.get(10)?,
             updated_at: row.get(11)?,
+            certificate_number: row.get(12)?,
         })
     })?;
 

@@ -17,7 +17,7 @@ export default function MembersPage() {
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-  const [selectedMember, setSelectedMember] = useState<any>(null);
+  // const [selectedMember, setSelectedMember] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const filteredMembers = searchQuery
           ? members.filter((m) =>

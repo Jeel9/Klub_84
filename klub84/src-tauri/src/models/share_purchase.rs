@@ -18,4 +18,5 @@ pub struct SharePurchase {
 
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
+    pub certificate_number: Option<String>,
 }

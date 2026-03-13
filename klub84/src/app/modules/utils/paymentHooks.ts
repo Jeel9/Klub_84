@@ -6,9 +6,11 @@ export function usePayments(purchaseId?: string) {
   const [payments, setPayments] = useState<Payment[]>([]);
 
   const load = async () => {
+    console.log("calling payments:");
+
     if (!purchaseId) return;
     const data = await invoke<Payment[]>("get_purchase_payments", { purchaseId });
-    // console.log("Loaded payments:", data);
+    console.log("Loaded payments:", data);
     setPayments(data);
   };
 

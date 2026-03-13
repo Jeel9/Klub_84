@@ -30,3 +30,17 @@ pub fn establish_connection(app: &tauri::AppHandle) -> Result<Connection> {
 
     Ok(conn)
 }
+
+pub fn get_db_path(app: &tauri::AppHandle) -> String {
+
+    let app_dir = app
+        .path()
+        .app_data_dir()
+        .expect("Failed to get app data directory");
+
+    fs::create_dir_all(&app_dir).expect("Failed to create app data directory");
+
+    let db_path = app_dir.join("klub84.db");
+
+    db_path.to_string_lossy().to_string()
+}

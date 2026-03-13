@@ -3,6 +3,15 @@ use rusqlite::{Connection, Result};
 pub fn initialize_schema(conn: &Connection) -> Result<()> {
     conn.execute_batch(
         "
+        CREATE TABLE IF NOT EXISTS admin_user (
+            id INTEGER PRIMARY KEY,
+            username TEXT,
+            password TEXT
+        );  
+
+        INSERT OR IGNORE INTO admin_user (username,password)
+        VALUES ('admin','klub84');
+
         CREATE TABLE IF NOT EXISTS companies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
@@ -15,7 +24,7 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
             member_id TEXT PRIMARY KEY NOT NULL,
             company_id INTEGER NOT NULL,
 
-            profile_picture TEXT,
+            profile_image TEXT,
             name TEXT NOT NULL,
             city TEXT,
             address TEXT,
@@ -92,6 +101,7 @@ pub fn initialize_schema(conn: &Connection) -> Result<()> {
             scheme_id TEXT NOT NULL,
 
             quantity INTEGER NOT NULL,
+            certificate_number TEXT,
             price_per_share REAL NOT NULL,
             total_amount REAL NOT NULL,
 

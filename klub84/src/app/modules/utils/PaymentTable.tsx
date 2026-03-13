@@ -11,6 +11,7 @@ export default function PaymentTable({ payments, onBounce }: any) {
           <th>Mode</th>
           <th>Type</th>
           <th>Status</th>
+          <th>Date</th>
           <th></th>
         </tr>
       </thead>
@@ -29,6 +30,7 @@ export default function PaymentTable({ payments, onBounce }: any) {
                 </Button>
               )}
             </td>
+            <td>{p.created_at}</td>
           </tr>
         ))}
       </tbody>

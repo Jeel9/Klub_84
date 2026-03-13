@@ -89,7 +89,7 @@ export default function PaymentForm({
           }}
           onClick={() => {
             if (!amount) return;
-            onCreate(purchase.purchase_id, purchase.member_id ,amount, mode, reference);
+            onCreate(purchase.purchaseId, purchase.memberId ,amount, mode, reference);
             setAmount(0);
             setReference("");
           }}

@@ -10,10 +10,25 @@ export default function usePurchases(memberId?: string) {
     if (!memberId) return;
     setLoading(true);
 
-    const data = await invoke<SharePurchase[]>("get_member_purchases", {memberId});
+    const data: any[] = await invoke<SharePurchase[]>("get_member_purchases", { memberId });
 
-    setPurchases(data);
-    console.log("Loaded purchases:", data);
+    const mapped: SharePurchase[] = data.map((p) => ({
+      purchaseId: p.purchase_id,
+      memberId: p.member_id,
+      companyId: p.company_id,
+      schemeId: p.scheme_id,
+      schemeName: p.scheme_name,
+      quantity: p.quantity,
+      sharePrice: p.share_price,
+      totalAmount: p.total_amount,
+      paidAmount: p.paid_amount,
+      pendingAmount: p.pending_amount,
+      status: p.status,
+      createdAt: p.created_at,
+      certificateNumber: p.certificate_number,
+    }));
+
+    setPurchases(mapped);
     setLoading(false);
   };
 
@@ -24,6 +39,7 @@ export default function usePurchases(memberId?: string) {
     quantity: number,
     sharePrice: number,
     paidAmount: number,
+    certiNumber: string
   ) => {
     if (!memberId) return;
 
@@ -34,6 +50,7 @@ export default function usePurchases(memberId?: string) {
       quantity,
       pricePerShare: sharePrice,
       firstPayment: paidAmount,
+      certificateNumber: certiNumber,
     });
 
     await load();

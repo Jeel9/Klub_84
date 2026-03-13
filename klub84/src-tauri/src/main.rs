@@ -17,6 +17,7 @@ use services::member_serv::{create_member, get_members, update_member, deactivat
 use services::share_serv::{create_share_scheme, get_company_share_schemes, update_share_price, deactivate_share_scheme};
 use services::purchase_serv::{create_share_purchase, get_member_purchases, sell_share};
 use services::payment_serv::{get_purchase_payments, add_purchase_payment, bounce_payment};
+use services::login_serv::{login};
 
 struct AppState {
     db: Mutex<Connection>,
@@ -26,6 +27,11 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .setup(|app| {
+            let db_path = db::connection::get_db_path(app.handle());
+
+            // backup before opening
+            db::db_backup::backup_database(&db_path).ok();
+
             let conn = establish_connection(app.handle())?;
             app.manage(AppState {
                 db: Mutex::new(conn),
@@ -33,6 +39,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            login,
             create_member,
             get_members,
             update_member,
