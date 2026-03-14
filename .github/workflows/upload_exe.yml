@@ -1,0 +1,22 @@
+name: Exe Upload
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: klub84
+
+    steps:
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: klub84-windows-build
+          path: D:\a\Klub_84\Klub_84\klub84\src-tauri\target\release\bundle\nsis
